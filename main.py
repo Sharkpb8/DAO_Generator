@@ -1,4 +1,5 @@
 from Generator.DAO_class import *
+from Generator.DAO import *
 
 entities = {
     "autor":
@@ -8,3 +9,4 @@ entities = {
     }
 
 GenerateClass(entities)
+GenerateDAO(entities)

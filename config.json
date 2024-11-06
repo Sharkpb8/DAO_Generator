@@ -1,6 +1,9 @@
 {
     "namespace": "Database_project",
     "class":{
-        "using":["Linq","Text","Collections.Generic"]
+        "using":["Collections.Generic","Linq","Text","Threading.Tasks"]
+    },
+    "DAO":{
+        "using":["Collections.Generic","Data.SqlClient","Linq","Text","Threading.Tasks","Xml"]
     }
 }
