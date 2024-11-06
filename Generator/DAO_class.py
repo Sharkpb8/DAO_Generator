@@ -1,4 +1,5 @@
 import os
+import json
 
 def Private(table,current,file):
     for x,i in table.items():
@@ -8,8 +9,8 @@ def Private(table,current,file):
             file.write("\n")
 
 def ClassName(current,file):
-    file.write(f"public class {current}\n")
-    file.write("{\n")
+    file.write(f"\n    public class {current}\n")
+    file.write("    {\n")
 
 def GetSet(table,current,file):
     for x,i in table.items():
@@ -61,6 +62,7 @@ def ToString(table,current,file):
                 file.write(f"{{{z}}} ")
             file.write('";')
             file.write("\n        }")
+            file.write("\n    }")
             file.write("\n}")
 
 def GetTables(entities):
@@ -78,11 +80,18 @@ def OpenFile(table):
     else:
         f = open(f"./Output/{table}.cs","x")
         return f
+    
+def LoadNamespace(file):
+    j = open('./config.json', 'r')
+    config = json.load(j)
+    file.write("namespace "+config["namespace"])
+    file.write("{")
 
 def GenerateClass(entities):
     tables = GetTables(entities)
     for t in tables:
-        file = OpenFile(t) 
+        file = OpenFile(t)
+        LoadNamespace(file) 
         ClassName(t,file)
         Private(entities,t,file)
         GetSet(entities,t,file)
