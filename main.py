@@ -47,6 +47,18 @@ def ConstructorWithoutId(table):
             print("        }")
             print("")
 
+def ToString(table):
+    print("        public override string ToString()")
+    print("        {")
+    for x,i in table.items():
+        if(x == t):
+            print('            return $"', end=" ")
+            for z,y in i.items():
+                print("{"+z+"}", end=" ")
+            print('";')
+            print("        }")
+            print("}")
+
 
 entities = {
     "autor":
@@ -65,3 +77,4 @@ for t in tables:
     GetSet(entities)
     Constructor(entities)   
     ConstructorWithoutId(entities)
+    ToString(entities)
