@@ -1,3 +1,5 @@
+import os
+
 def Private(table,current):
     for x,i in table.items():
         if(x == current):
@@ -65,10 +67,16 @@ def GetTables(entities):
         tables.append(i)
     return tables
 
+def CreateFile(table):
+    if(os.path.isfile(f"./Output/{table}.cs")):
+        return Exception(f"Ve výstupu se nachází nepovolený soubor {table}.cs")
+    f = open(f"./Output/{table}.cs","x")
+    return f
+
 def GenerateClass(entities):
     tables = GetTables(entities)
     for t in tables:
-        ClassName(t)
+        file = CreateFile(t)
         Private(entities,t)
         GetSet(entities,t)
         Constructor(entities,t)   
