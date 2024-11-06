@@ -80,18 +80,29 @@ def OpenFile(table):
     else:
         f = open(f"./Output/{table}.cs","x")
         return f
-    
-def LoadNamespace(file):
+
+def OpenJson():
     j = open('./config.json', 'r')
     config = json.load(j)
-    file.write("namespace "+config["namespace"])
+    return config
+
+def LoadNamespace(file,json):
+    file.write("\nnamespace "+json["namespace"])
     file.write("{")
+
+def Using(file,json):
+    file.write("using System;")
+    for i in json["class"]["using"]:
+        file.write(f"\nusing System.{i}")
+    file.write("\n")
 
 def GenerateClass(entities):
     tables = GetTables(entities)
     for t in tables:
         file = OpenFile(t)
-        LoadNamespace(file) 
+        json = OpenJson()
+        Using(file,json)
+        LoadNamespace(file,json) 
         ClassName(t,file)
         Private(entities,t,file)
         GetSet(entities,t,file)

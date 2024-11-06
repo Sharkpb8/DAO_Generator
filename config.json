@@ -1,3 +1,6 @@
 {
-    "namespace": "Database_project"
+    "namespace": "Database_project",
+    "class":{
+        "using":["Linq","Text","Collections.Generic"]
+    }
 }
