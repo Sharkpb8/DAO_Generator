@@ -1,64 +1,67 @@
 import os
 
-#x is not first capital letter needs fix
 def Private(table,current,file):
     for x,i in table.items():
         if(x.capitalize() == current):
             for z,y in i.items():
-                file.write("\n        private",y,z+";")
+                file.write(f"\n        private {y} {z};")
+            file.write("\n")
 
 def ClassName(current,file):
     file.write(f"public class {current}\n")
     file.write("{\n")
-    file.close()
 
-def GetSet(table,current):
+def GetSet(table,current,file):
     for x,i in table.items():
-        if(x == current):
+        if(x.capitalize() == current):
             for z,y in i.items():
-                print("        public",y,z.capitalize(),"{"" get =>",z,"; set =>",z,"= values;""}")
-            print("")
+                file.write(f"\n        public {y} {z.capitalize()} {{ get => {z}; set => {z} = values; }}")
+            file.write("\n")
 
-def Constructor(table,current):
+def Constructor(table,current,file):
     for x,i in table.items():
-        if(x == current):
-            print("        public",x+"(", end=" ")
+        if(x.capitalize() == current):
+            file.write(f"\n        public {x.capitalize()}(")
+            temp = ""
             for z,y in i.items():
-                print(y,z,end =" ")
-            print(")")
-            print("        {")
+                temp += f"{y} {z}, "
+            file.write(temp[0:len(temp)-2])
+            file.write(")")
+            file.write("\n        {")
             for z,y in i.items():
-                print("             this."+z+" = "+z+";")
-            print("        }")
-            print("")
+                file.write(f"\n             this.{z} = {z};")
+            file.write("\n        }")
+            file.write("\n")
 
-def ConstructorWithoutId(table,current):
+def ConstructorWithoutId(table,current,file):
     for x,i in table.items():
-        if(x == current):
-            print("        public",x+"(", end=" ")
+        if(x.capitalize() == current):
+            file.write(f"\n        public {x.capitalize()}(")
+            temp = ""
             for z,y in i.items():
-                print(y,z,end =" ")
-            print(")")
-            print("        {")
+                temp += f"{y} {z}, "
+            file.write(temp[0:len(temp)-2])
+            file.write(")")
+            file.write("\n        {")
             for z,y in i.items():
                 if(z != "id"):
-                    print("             this."+z+" = "+z+";")
+                    file.write(f"\n              this.{z} = {z};")
                 else:
-                    print("             this."+z+" = 0;")
-            print("        }")
-            print("")
+                    file.write(f"\n              this.{z} = 0;")
+            file.write("\n        }")
+            file.write("\n")
 
-def ToString(table,current):
-    print("        public override string ToString()")
-    print("        {")
+def ToString(table,current,file):
+    file.write("\n        public override string ToString()")
+    file.write("\n        {")
     for x,i in table.items():
-        if(x == current):
-            print('            return $"', end=" ")
+        if(x.capitalize() == current):
+            file.write('\n            return $"')
             for z,y in i.items():
-                print("{"+z+"}", end=" ")
-            print('";')
-            print("        }")
-            print("}")
+                file.write(f"{{{z}}} ")
+            file.write('";')
+            file.write("\n        }")
+            file.write("\n}")
 
 def GetTables(entities):
     tables = []
@@ -82,8 +85,8 @@ def GenerateClass(entities):
         file = OpenFile(t) 
         ClassName(t,file)
         Private(entities,t,file)
-        GetSet(entities,t)
-        Constructor(entities,t)     
-        ConstructorWithoutId(entities,t)
-        ToString(entities,t)
+        GetSet(entities,t,file)
+        Constructor(entities,t,file)     
+        ConstructorWithoutId(entities,t,file)
+        ToString(entities,t,file)
         file.close()
