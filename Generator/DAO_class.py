@@ -1,17 +1,16 @@
 import os
 
-def Private(table,current):
+#x is not first capital letter needs fix
+def Private(table,current,file):
     for x,i in table.items():
-        if(x == current):
+        if(x.capitalize() == current):
             for z,y in i.items():
-                print("        private",y,z+";")
-            print("")
+                file.write("\n        private",y,z+";")
 
-def ClassName(current):
-    print("")
-    print("public class",current)
-    print("{")
-    print("")
+def ClassName(current,file):
+    file.write(f"public class {current}\n")
+    file.write("{\n")
+    file.close()
 
 def GetSet(table,current):
     for x,i in table.items():
@@ -64,21 +63,27 @@ def ToString(table,current):
 def GetTables(entities):
     tables = []
     for i in entities:
-        tables.append(i)
+        tables.append(i.capitalize())
     return tables
 
-def CreateFile(table):
+def OpenFile(table):
+    if(os.path.exists("./Output") == False):
+        os.mkdir("./Output")
     if(os.path.isfile(f"./Output/{table}.cs")):
-        return Exception(f"Ve výstupu se nachází nepovolený soubor {table}.cs")
-    f = open(f"./Output/{table}.cs","x")
-    return f
+        f = open(f"./Output/{table}.cs","w")
+        return f
+    else:
+        f = open(f"./Output/{table}.cs","x")
+        return f
 
 def GenerateClass(entities):
     tables = GetTables(entities)
     for t in tables:
-        file = CreateFile(t)
-        Private(entities,t)
+        file = OpenFile(t) 
+        ClassName(t,file)
+        Private(entities,t,file)
         GetSet(entities,t)
-        Constructor(entities,t)   
+        Constructor(entities,t)     
         ConstructorWithoutId(entities,t)
         ToString(entities,t)
+        file.close()
