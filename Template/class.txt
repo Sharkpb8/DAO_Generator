@@ -15,7 +15,7 @@
 
         <constructorwithoutid>
         {
-            <constructorwithoutidvaleus>
+            <propertiesWithoutId>
         }
 
         public override string ToString()

@@ -56,48 +56,56 @@ def Constructor(entities,t,indentation):
             return temp
 
 def properties(entities,t,indentation):
-            for x,i in entities.items():
-                if(x.capitalize() == t):
-                    temp = ""
-                    First = True
-                    for z,y in i.items():
-                        if First:
-                            temp += (f"this.{z} = {z};")
-                            First = False
-                        else:
-                            temp += (f"\n{indentation}this.{z} = {z};")
-                    return temp
-
-def ConstructorWithoutId(entities,t,file):
     for x,i in entities.items():
         if(x.capitalize() == t):
-            file.write(f"\n        public {x.capitalize()}(")
             temp = ""
+            First = True
             for z,y in i.items():
-                temp += f"{y} {z}, "
-            file.write(temp[0:len(temp)-2])
-            file.write(")")
-            file.write("\n        {")
-            for z,y in i.items():
-                if(z != "id"):
-                    file.write(f"\n              this.{z} = {z};")
+                if First:
+                    temp += (f"this.{z} = {z};")
+                    First = False
                 else:
-                    file.write(f"\n              this.{z} = 0;")
-            file.write("\n        }")
-            file.write("\n")
+                    temp += (f"\n{indentation}this.{z} = {z};")
+            return temp
 
-def ToString(entities,t,file):
-    file.write("\n        public override string ToString()")
-    file.write("\n        {")
+def ConstructorWithoutId(entities,t,indentation):
     for x,i in entities.items():
         if(x.capitalize() == t):
-            file.write('\n            return $"')
+            temp = (f"\n{indentation}public {x.capitalize()}(")
+            parametrs = ""
             for z,y in i.items():
-                file.write(f"{{{z}}} ")
-            file.write('";')
-            file.write("\n        }")
-            file.write("\n    }")
-            file.write("\n}")
+                if z.lower() != "id":
+                    parametrs += f"{y} {z}, "
+            temp += (parametrs[0:len(parametrs)-2]+")")
+            return temp
+        
+def propertiesWithoutId(entities,t,indentation):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
+            temp = ""
+            First = True
+            for z,y in i.items():
+                if First:
+                    if(z.lower() != "id"):
+                        temp += (f"this.{z} = {z};")
+                    else:
+                        temp += (f"this.{z} = 0;")
+                    First = False
+                else:
+                    if(z.lower() != "id"):
+                        temp += (f"\n{indentation}this.{z} = {z};")
+                    else:
+                        temp += (f"\n{indentation}this.{z} = 0;")
+            return temp
+
+def ToString(entities,t,indentation):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
+            temp = ('return $"')
+            for z,y in i.items():
+                temp += (f"{{{z}}} ")
+            temp += ('";')
+            return temp
 
 def GetTables(entities):
     tables = []
@@ -157,15 +165,16 @@ def GenerateClass(entities):
                 case i if "<properties>" in i:
                     x = i.replace("<properties>",properties(entities,t,get_indentation(i)))
                     file.write(x)
+                case i if "<constructorwithoutid>" in i:
+                    x = i.replace("<constructorwithoutid>",ConstructorWithoutId(entities,t,get_indentation(i)))
+                    file.write(x)
+                case i if "<propertiesWithoutId>" in i:
+                    x = i.replace("<propertiesWithoutId>",propertiesWithoutId(entities,t,get_indentation(i)))
+                    file.write(x)
+                case i if "<tostring>" in i:
+                    x = i.replace("<tostring>",ToString(entities,t,get_indentation(i)))
+                    file.write(x)
                 case i:
                     file.write(i)
-        # Using(file,json)
-        # LoadNamespace(file,json) 
-        # ClassName(t,file)
-        # Private(entities,t,file)
-        # GetSet(entities,t,file)
-        # Constructor(entities,t,file)     
-        # ConstructorWithoutId(entities,t,file)
-        # ToString(entities,t,file)
         file.close()
         read.close()
