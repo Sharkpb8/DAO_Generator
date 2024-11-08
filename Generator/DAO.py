@@ -54,6 +54,25 @@ def Reader(entities,t,indentation):
                         used -=1
             return (temp[0:len(temp)-1])
 
+def Save(t):
+    return f"public void Save({t} {t.lower()[0]})"
+
+#remove id
+def Inseret(entities,t):
+    temp = f'using (command = new SqlCommand("insert into {t} ('
+    for x,i in entities.items():
+        if(x.capitalize() == t):
+            atributes = ""
+            for z,y in i.items():
+                atributes += f"{z}, "
+            temp += atributes[0:len(atributes)-2]+") values ("
+            atributes = ""
+            for z,y in i.items():
+                atributes += f"@{z}, "
+            temp += atributes[0:len(atributes)-2]+')", conn))'
+            return temp
+
+
 
 def GetTables(entities):
     tables = []
@@ -113,6 +132,12 @@ def GenerateDAO(entities):
                     file.write(x)
                 case i if "<Reader>" in i:
                     x = i.replace("<Reader>",Reader(entities,t,get_indentation(i)))
+                    file.write(x)
+                case i if "<Save>" in i:
+                    x = i.replace("<Save>",Save(t))
+                    file.write(x)
+                case i if "<Inseret>" in i:
+                    x = i.replace("<Inseret>",Inseret(entities,t))
                     file.write(x)
                 case i:
                     file.write(i)

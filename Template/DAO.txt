@@ -21,3 +21,17 @@
                 reader.Close();
             }
         }
+
+        <Save>
+        {
+            SqlConnection conn = DatabaseSingleton.GetInstance();
+
+            SqlCommand command = null;
+
+            <Inseret>
+            {
+                <Params>
+                
+                command.ExecuteNonQuery();
+            }
+        }
