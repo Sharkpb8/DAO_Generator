@@ -1,0 +1,26 @@
+<using>
+
+<namespace>
+{
+    <class>
+    {
+<private>
+
+<settergetter>
+
+        <constructor>
+        {
+            <constructorvalues>
+        }
+
+        <constructorwithoutid>
+        {
+    <constructorwithoutidvaleus>
+        }
+
+        public override string ToString()
+        {
+            <tostring>
+        }
+    }
+}

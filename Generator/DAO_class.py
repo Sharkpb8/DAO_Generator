@@ -86,27 +86,45 @@ def OpenJson():
     config = json.load(j)
     return config
 
-def LoadNamespace(file,json):
-    file.write("\nnamespace "+json["namespace"])
-    file.write("{")
+def Namespace(file,json):
+    x = "\nnamespace "+json["namespace"]
+    x += "{"
+    return x
 
-def Using(file,json):
-    file.write("using System;")
+def Using(json):
+    x = "using System;"
     for i in json["class"]["using"]:
-        file.write(f"\nusing System.{i}")
-    file.write("\n")
+        x += f"\nusing System.{i}"
+    x += "\n"
+    return x
+
+def ReadTemplate():
+    f = open(f"./Template/class.txt","r")
+    return f
 
 def GenerateClass(entities):
     tables = GetTables(entities)
     for t in tables:
-        file = OpenFile(t)
+        read = ReadTemplate()
         json = OpenJson()
-        Using(file,json)
-        LoadNamespace(file,json) 
-        ClassName(t,file)
-        Private(entities,t,file)
-        GetSet(entities,t,file)
-        Constructor(entities,t,file)     
-        ConstructorWithoutId(entities,t,file)
-        ToString(entities,t,file)
+        file = OpenFile(t)
+        for i in read:
+            match i:
+                case i if "<using>" in i:
+                    x = i.replace("<using>",Using(json))
+                    file.write(x)
+                case i if "<namespace>" in i:
+                    x = i.replace("<namespace>",Namespace(file,json))
+                    file.write(x)
+                case i:
+                    file.write(i)
+        # Using(file,json)
+        # LoadNamespace(file,json) 
+        # ClassName(t,file)
+        # Private(entities,t,file)
+        # GetSet(entities,t,file)
+        # Constructor(entities,t,file)     
+        # ConstructorWithoutId(entities,t,file)
+        # ToString(entities,t,file)
         file.close()
+        read.close()
