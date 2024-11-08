@@ -1,5 +1,65 @@
 import os
 import json
+import re
+
+def Using(json):
+    temp = "using System;"
+    for i in json["DAO"]["using"]:
+        temp += f"\nusing System.{i}"
+    temp += "\n"
+    return temp
+
+def Namespace(json):
+    temp = "namespace "+json["namespace"]
+    return temp
+
+def ClassName(t):
+    temp = f"public class {t}"
+    return temp
+
+def GetAll(t):
+    temp = f"public IEnumerable<{t.capitalize()}> GetAll()"
+    return temp
+
+def Select(t):
+    temp = f'using (SqlCommand command = new SqlCommand("SELECT * FROM {t}", conn))'
+    return temp
+
+def NewInstance(current):
+    temp = (f"{current.capitalize()} {current.lower()} = new {current.capitalize()}(")
+    return temp
+
+def Reader(entities,t,indentation):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
+            lenght = len(i)
+            used = len(i)
+            temp = ""
+            First = True
+            for z,y in i.items():
+                if First:
+                    if(y == "int"):
+                        temp += f"Convert.ToInt32(reader[{lenght-used}].ToString()),"
+                        used -=1
+                    else:
+                        temp += f"reader[{lenght-used}].ToString(),"
+                        used -=1
+                    First = False
+                else:
+                    if(y == "int"):
+                        temp += f"\n{indentation}Convert.ToInt32(reader[{lenght-used}].ToString()),"
+                        used -=1
+                    else:
+                        temp += f"\n{indentation}reader[{lenght-used}].ToString(),"
+                        used -=1
+            return (temp[0:len(temp)-1])
+
+
+def GetTables(entities):
+    tables = []
+    for i in entities:
+        tables.append(i.capitalize())
+    return tables
 
 def OpenFile(table):
     if(os.path.exists("./Output") == False):
@@ -16,62 +76,45 @@ def OpenJson():
     config = json.load(j)
     return config
 
-def GetTables(entities):
-    tables = []
-    for i in entities:
-        tables.append(i.capitalize())
-    return tables
+def ReadTemplate():
+    f = open(f"./Template/DAO.txt","r")
+    return f
 
-def Using(file,json):
-    file.write("using System;")
-    for i in json["DAO"]["using"]:
-        file.write(f"\nusing System.{i}")
-    file.write("\n")
-
-def LoadNamespace(file,json):
-    file.write("\nnamespace "+json["namespace"])
-    file.write("{")
-
-def ClassName(current,file):
-    file.write(f"\n    public class {current}\n")
-    file.write("    {\n")
-
-def GetAll(table,current,file):
-    file.write(f"\n        public IEnumerable<{current}> GetAll()")
-    file.write("\n        {")
-    file.write(f"\n            SqlConnection conn = DatabaseSingleton.GetInstance();\n")
-    file.write(f"\n            using (SqlCommand command = new SqlCommand(SELECT * FROM {current}, conn))")
-    file.write("\n            {")
-    file.write("\n                SqlDataReader reader = command.ExecuteReader();\n                while (reader.Read())\n                {")
-    file.write(f"\n                    {current.capitalize()} {current} = new {current.capitalize()}(")
-    for x,i in table.items():
-        if(x.capitalize() == current):
-            lenght = len(i)
-            used = len(i)
-            strings = ""
-            for z,y in i.items():
-                if(y == "int"):
-                    strings += f"\n                        Convert.ToInt32(reader[{lenght-used}].ToString()),"
-                    used -=1
-                else:
-                    strings += f"\n                        reader[{lenght-used}].ToString(),"
-                    used -=1
-            file.write(strings[0:len(strings)-1])
-            file.write("\n                    ); ;")
-            file.write("\n                    yield return autor;")
-            file.write("\n                }")
-            file.write("\n                reader.Close();")
-            file.write("\n            }")
-            file.write("\n        }")
+def get_indentation(line):
+    match = re.match(r"^\s*", line)
+    return match.group(0)
 
 
 def GenerateDAO(entities):
     tables = GetTables(entities)
     for t in tables:
-        file = OpenFile(t)
+        read = ReadTemplate()
         json = OpenJson()
-        Using(file,json)
-        LoadNamespace(file,json) 
-        ClassName(t,file)
-        GetAll(entities,t,file)
+        file = OpenFile(t)
+        for i in read:
+            match i:
+                case i if "<using>" in i:
+                    x = i.replace("<using>",Using(json))
+                    file.write(x)
+                case i if "<namespace>" in i:
+                    x = i.replace("<namespace>",Namespace(json))
+                    file.write(x)
+                case i if "<class>" in i:
+                    x = i.replace("<class>",ClassName(t))
+                    file.write(x)
+                case i if "<GetAll>" in i:
+                    x = i.replace("<GetAll>",GetAll(t))
+                    file.write(x)
+                case i if "<select>" in i:
+                    x = i.replace("<select>",Select(t))
+                    file.write(x)
+                case i if "<NewInstance>" in i:
+                    x = i.replace("<NewInstance>",NewInstance(t))
+                    file.write(x)
+                case i if "<Reader>" in i:
+                    x = i.replace("<Reader>",Reader(entities,t,get_indentation(i)))
+                    file.write(x)
+                case i:
+                    file.write(i)
         file.close()
+        read.close()

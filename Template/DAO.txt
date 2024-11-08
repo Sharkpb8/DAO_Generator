@@ -1,0 +1,23 @@
+<using>
+
+<namespace>
+{
+    <class>
+    {
+        <GetAll>
+        {
+            SqlConnection conn = DatabaseSingleton.GetInstance();
+
+            <select>
+            {
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    <NewInstance>
+                        <Reader>
+                    );
+                    <yield>
+                }
+                reader.Close();
+            }
+        }
