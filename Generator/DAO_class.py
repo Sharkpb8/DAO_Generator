@@ -21,8 +21,13 @@ def Private(entities,t,indentation):
     for x,i in entities.items():
         if(x.capitalize() == t):
             temp =""
+            First = True
             for z,y in i.items():
-                temp += f"\n{indentation}private {y} {z};"
+                if First:
+                    temp += f"private {y} {z};"
+                    First = False
+                else:
+                    temp += f"\n{indentation}private {y} {z};"
             temp += "\n"
             return temp
 
@@ -31,24 +36,37 @@ def GetSet(entities,t,indentation):
     for x,i in entities.items():
         if(x.capitalize() == t):
             temp = ""
+            First = True
             for z,y in i.items():
-                temp += f"\n{indentation}public {y} {z.capitalize()} {{ get => {z}; set => {z} = values; }}"
+                if First:
+                    temp += f"public {y} {z.capitalize()} {{ get => {z}; set => {z} = values; }}"
+                    First = False
+                else:
+                    temp += f"\n{indentation}public {y} {z.capitalize()} {{ get => {z}; set => {z} = values; }}"
             return temp
 
-def Constructor(entities,t,file):
+def Constructor(entities,t,indentation):
     for x,i in entities.items():
         if(x.capitalize() == t):
-            file.write(f"\n        public {x.capitalize()}(")
-            temp = ""
+            temp = (f"\n{indentation}public {x.capitalize()}(")
+            parametrs = ""
             for z,y in i.items():
-                temp += f"{y} {z}, "
-            file.write(temp[0:len(temp)-2])
-            file.write(")")
-            file.write("\n        {")
-            for z,y in i.items():
-                file.write(f"\n             this.{z} = {z};")
-            file.write("\n        }")
-            file.write("\n")
+                parametrs += f"{y} {z}, "
+            temp += (parametrs[0:len(parametrs)-2]+")")
+            return temp
+
+def properties(entities,t,indentation):
+            for x,i in entities.items():
+                if(x.capitalize() == t):
+                    temp = ""
+                    First = True
+                    for z,y in i.items():
+                        if First:
+                            temp += (f"this.{z} = {z};")
+                            First = False
+                        else:
+                            temp += (f"\n{indentation}this.{z} = {z};")
+                    return temp
 
 def ConstructorWithoutId(entities,t,file):
     for x,i in entities.items():
@@ -132,6 +150,12 @@ def GenerateClass(entities):
                     file.write(x)
                 case i if "<settergetter>" in i:
                     x = i.replace("<settergetter>",GetSet(entities,t,get_indentation(i)))
+                    file.write(x)
+                case i if "<constructor>" in i:
+                    x = i.replace("<constructor>",Constructor(entities,t,get_indentation(i)))
+                    file.write(x)
+                case i if "<properties>" in i:
+                    x = i.replace("<properties>",properties(entities,t,get_indentation(i)))
                     file.write(x)
                 case i:
                     file.write(i)

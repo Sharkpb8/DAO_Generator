@@ -10,12 +10,12 @@
 
         <constructor>
         {
-            <constructorvalues>
+            <properties>
         }
 
         <constructorwithoutid>
         {
-    <constructorwithoutidvaleus>
+            <constructorwithoutidvaleus>
         }
 
         public override string ToString()
