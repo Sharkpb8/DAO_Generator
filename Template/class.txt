@@ -4,9 +4,9 @@
 {
     <class>
     {
-<private>
+        <private>
 
-<settergetter>
+        <settergetter>
 
         <constructor>
         {

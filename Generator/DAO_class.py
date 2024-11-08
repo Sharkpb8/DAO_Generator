@@ -1,27 +1,43 @@
 import os
 import json
+import re
 
-def Private(table,current,file):
-    for x,i in table.items():
-        if(x.capitalize() == current):
+def Using(json):
+    x = "using System;"
+    for i in json["class"]["using"]:
+        x += f"\nusing System.{i}"
+    x += "\n"
+    return x
+
+def Namespace(json):
+    x = "namespace "+json["namespace"]
+    return x
+
+def ClassName(t):
+    x = f"public class {t}"
+    return x
+
+def Private(entities,t,indentation):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
+            temp =""
             for z,y in i.items():
-                file.write(f"\n        private {y} {z};")
-            file.write("\n")
+                temp += f"\n{indentation}private {y} {z};"
+            temp += "\n"
+            return temp
 
-def ClassName(current,file):
-    file.write(f"\n    public class {current}\n")
-    file.write("    {\n")
 
-def GetSet(table,current,file):
-    for x,i in table.items():
-        if(x.capitalize() == current):
+def GetSet(entities,t,indentation):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
+            temp = ""
             for z,y in i.items():
-                file.write(f"\n        public {y} {z.capitalize()} {{ get => {z}; set => {z} = values; }}")
-            file.write("\n")
+                temp += f"\n{indentation}public {y} {z.capitalize()} {{ get => {z}; set => {z} = values; }}"
+            return temp
 
-def Constructor(table,current,file):
-    for x,i in table.items():
-        if(x.capitalize() == current):
+def Constructor(entities,t,file):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
             file.write(f"\n        public {x.capitalize()}(")
             temp = ""
             for z,y in i.items():
@@ -34,9 +50,9 @@ def Constructor(table,current,file):
             file.write("\n        }")
             file.write("\n")
 
-def ConstructorWithoutId(table,current,file):
-    for x,i in table.items():
-        if(x.capitalize() == current):
+def ConstructorWithoutId(entities,t,file):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
             file.write(f"\n        public {x.capitalize()}(")
             temp = ""
             for z,y in i.items():
@@ -52,11 +68,11 @@ def ConstructorWithoutId(table,current,file):
             file.write("\n        }")
             file.write("\n")
 
-def ToString(table,current,file):
+def ToString(entities,t,file):
     file.write("\n        public override string ToString()")
     file.write("\n        {")
-    for x,i in table.items():
-        if(x.capitalize() == current):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
             file.write('\n            return $"')
             for z,y in i.items():
                 file.write(f"{{{z}}} ")
@@ -86,21 +102,13 @@ def OpenJson():
     config = json.load(j)
     return config
 
-def Namespace(file,json):
-    x = "\nnamespace "+json["namespace"]
-    x += "{"
-    return x
-
-def Using(json):
-    x = "using System;"
-    for i in json["class"]["using"]:
-        x += f"\nusing System.{i}"
-    x += "\n"
-    return x
-
 def ReadTemplate():
     f = open(f"./Template/class.txt","r")
     return f
+
+def get_indentation(line):
+    match = re.match(r"^\s*", line)
+    return match.group(0)
 
 def GenerateClass(entities):
     tables = GetTables(entities)
@@ -114,7 +122,16 @@ def GenerateClass(entities):
                     x = i.replace("<using>",Using(json))
                     file.write(x)
                 case i if "<namespace>" in i:
-                    x = i.replace("<namespace>",Namespace(file,json))
+                    x = i.replace("<namespace>",Namespace(json))
+                    file.write(x)
+                case i if "<class>" in i:
+                    x = i.replace("<class>",ClassName(t))
+                    file.write(x)
+                case i if "<private>" in i:
+                    x = i.replace("<private>",Private(entities,t,get_indentation(i)))
+                    file.write(x)
+                case i if "<settergetter>" in i:
+                    x = i.replace("<settergetter>",GetSet(entities,t,get_indentation(i)))
                     file.write(x)
                 case i:
                     file.write(i)
