@@ -47,3 +47,18 @@
                 command.ExecuteNonQuery();
             }
         }
+
+        <Update>
+        {
+            SqlConnection conn = DatabaseSingleton.GetInstance();
+
+            SqlCommand command = null;
+
+            <UpdateSQL>
+            {
+                <idParam>
+                <Params>
+
+                command.ExecuteNonQuery();
+            }
+        }

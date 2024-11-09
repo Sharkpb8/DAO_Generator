@@ -98,6 +98,20 @@ def DeleteSQL(t):
 def idParam(t):
     return f'command.Parameters.Add(new SqlParameter("@id", {t.lower()[0]}));'
 
+def Update(t):
+    return f"public void Update({t} {t.lower()[0]})"
+
+def UpdateSQL(entities,t):
+    temp = f'using (command = new SqlCommand("update {t} set '
+    for x,i in entities.items():
+        if(x.capitalize() == t):
+            atributes = ""
+            for z,y in i.items():
+                if z != "id":
+                    atributes += f"{z} = @{z}, "
+            temp += atributes[0:len(atributes)-2]+' " + "where id = @id", conn))'
+            return temp
+
 
 
 def GetTables(entities):
@@ -179,6 +193,9 @@ def GenerateDAO(entities):
                     file.write(x)
                 case i if "<idParam>" in i:
                     x = i.replace("<idParam>",idParam(t))
+                    file.write(x)
+                case i if "<UpdateSQL>" in i:
+                    x = i.replace("<UpdateSQL>",UpdateSQL(entities,t))
                     file.write(x)
                 case i:
                     file.write(i)
