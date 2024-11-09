@@ -187,64 +187,45 @@ def GenerateDAO(entities):
         for i in read:
             match i:
                 case i if "<using>" in i:
-                    x = i.replace("<using>",Using(json))
-                    file.write(x)
+                    file.write(i.replace("<using>",Using(json)))
                 case i if "<namespace>" in i:
-                    x = i.replace("<namespace>",Namespace(json))
-                    file.write(x)
+                    file.write(i.replace("<namespace>",Namespace(json)))
                 case i if "<class>" in i:
-                    x = i.replace("<class>",ClassName(t))
-                    file.write(x)
+                    file.write(i.replace("<class>",ClassName(t)))
                 case i if "<GetAll>" in i:
-                    x = i.replace("<GetAll>",GetAll(t,json))
-                    file.write(x)
+                    file.write(i.replace("<GetAll>",GetAll(t,json)))
                 case i if "<WinList>" in i:
                     if json["Windowed"]:
-                        x = i.replace("<WinList>",WinList(t))
-                        file.write(x)
+                        file.write(i.replace("<WinList>",WinList(t)))
                 case i if "<select>" in i:
-                    x = i.replace("<select>",Select(t))
-                    file.write(x)
+                    file.write(i.replace("<select>",Select(t)))
                 case i if "<NewInstance>" in i:
-                    x = i.replace("<NewInstance>",NewInstance(t))
-                    file.write(x)
+                    file.write(i.replace("<NewInstance>",NewInstance(t)))
                 case i if "<Reader>" in i:
-                    x = i.replace("<Reader>",Reader(entities,t,get_indentation(i)))
-                    file.write(x)
+                    file.write(i.replace("<Reader>",Reader(entities,t,get_indentation(i))))
                 case i if "<yield>" in i:
-                    x = i.replace("<yield>",yiel(t,json))
-                    file.write(x)
+                    file.write(i.replace("<yield>",yiel(t,json)))
                 case i if "<WinListReturn>" in i:
                     if json["Windowed"]:
-                        x = i.replace("<WinListReturn>",WinListReturn(t))
-                        file.write(x)
+                        file.write(i.replace("<WinListReturn>",WinListReturn(t)))
                 case i if "<Save>" in i:
-                    x = i.replace("<Save>",Save(t))
-                    file.write(x)
+                    file.write(i.replace("<Save>",Save(t)))
                 case i if "<InseretSQL>" in i:
-                    x = i.replace("<InseretSQL>",InseretSQL(entities,t))
-                    file.write(x)
+                    file.write(i.replace("<InseretSQL>",InseretSQL(entities,t)))
                 case i if "<ParamsWithoutid>" in i:
-                    x = i.replace("<ParamsWithoutid>",ParamsWithoutid(entities,t,get_indentation(i)))
-                    file.write(x)
+                    file.write(i.replace("<ParamsWithoutid>",ParamsWithoutid(entities,t,get_indentation(i))))
                 case i if "<Delete>" in i:
-                    x = i.replace("<Delete>",Delete(t))
-                    file.write(x)
+                    file.write(i.replace("<Delete>",Delete(t)))
                 case i if "<DeleteSQL>" in i:
-                    x = i.replace("<DeleteSQL>",DeleteSQL(t))
-                    file.write(x)
+                    file.write(i.replace("<DeleteSQL>",DeleteSQL(t)))
                 case i if "<idParam>" in i:
-                    x = i.replace("<idParam>",idParam(t))
-                    file.write(x)
+                    file.write(i.replace("<idParam>",idParam(t)))
                 case i if "<Update>" in i:
-                    x = i.replace("<Update>",Update(t))
-                    file.write(x)
+                    file.write(i.replace("<Update>",Update(t)))
                 case i if "<UpdateSQL>" in i:
-                    x = i.replace("<UpdateSQL>",UpdateSQL(entities,t,json))
-                    file.write(x)
+                    file.write(i.replace("<UpdateSQL>",UpdateSQL(entities,t,json)))
                 case i if "<Params>" in i:
-                    x = i.replace("<Params>",Params(entities,t,get_indentation(i),json))
-                    file.write(x)
+                    file.write(i.replace("<Params>",Params(entities,t,get_indentation(i),json)))
                 case i:
                     file.write(i)
         file.close()

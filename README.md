@@ -17,6 +17,7 @@ entities = {
     }
 ```
 5. run the code
+6. You can find the output in file `Output`
 
 ## Configuration
 There are 2 ways you can configure this code
