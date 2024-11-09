@@ -4,6 +4,7 @@
 This python code can be used to generate DAO and DAO classes for c# applications to reduce the time spent on this repetetive task
 
 ## Usage
+1. Download python 3.10 or newer
 1. Clone this repository using `git clone https://github.com/Sharkpb8/DAO_Generator.git`
 2. Open the folder using any code editor
 3. Open `main.py` and create variable that will be dictionary 
