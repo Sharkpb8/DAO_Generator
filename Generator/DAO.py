@@ -53,23 +53,40 @@ def Reader(entities,t,indentation):
                         temp += f"\n{indentation}reader[{lenght-used}].ToString(),"
                         used -=1
             return (temp[0:len(temp)-1])
+        
+def yiel(t):
+    return f"yield return {t.lower()};"
 
 def Save(t):
     return f"public void Save({t} {t.lower()[0]})"
 
-#remove id
 def Inseret(entities,t):
     temp = f'using (command = new SqlCommand("insert into {t} ('
     for x,i in entities.items():
         if(x.capitalize() == t):
             atributes = ""
             for z,y in i.items():
-                atributes += f"{z}, "
+                if z != "id":
+                    atributes += f"{z}, "
             temp += atributes[0:len(atributes)-2]+") values ("
             atributes = ""
             for z,y in i.items():
-                atributes += f"@{z}, "
+                if z != "id":
+                    atributes += f"@{z}, "
             temp += atributes[0:len(atributes)-2]+')", conn))'
+            return temp
+
+def Params(entities,t,indentation):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
+            temp = ""
+            First = True
+            for z,y in i.items():
+                if First:
+                    temp += f'command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
+                    First = False
+                else:
+                    temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
             return temp
 
 
@@ -133,11 +150,17 @@ def GenerateDAO(entities):
                 case i if "<Reader>" in i:
                     x = i.replace("<Reader>",Reader(entities,t,get_indentation(i)))
                     file.write(x)
+                case i if "<yield>" in i:
+                    x = i.replace("<yield>",yiel(t))
+                    file.write(x)
                 case i if "<Save>" in i:
                     x = i.replace("<Save>",Save(t))
                     file.write(x)
                 case i if "<Inseret>" in i:
                     x = i.replace("<Inseret>",Inseret(entities,t))
+                    file.write(x)
+                case i if "<Params>" in i:
+                    x = i.replace("<Params>",Params(entities,t,get_indentation(i)))
                     file.write(x)
                 case i:
                     file.write(i)
