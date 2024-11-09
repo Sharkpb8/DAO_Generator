@@ -145,35 +145,25 @@ def GenerateClass(entities):
         for i in read:
             match i:
                 case i if "<using>" in i:
-                    x = i.replace("<using>",Using(json))
-                    file.write(x)
+                    file.write(i.replace("<using>",Using(json)))
                 case i if "<namespace>" in i:
-                    x = i.replace("<namespace>",Namespace(json))
-                    file.write(x)
+                    file.write(i.replace("<namespace>",Namespace(json)))
                 case i if "<class>" in i:
-                    x = i.replace("<class>",ClassName(t))
-                    file.write(x)
+                    file.write(i.replace("<class>",ClassName(t)))
                 case i if "<private>" in i:
-                    x = i.replace("<private>",Private(entities,t,get_indentation(i)))
-                    file.write(x)
+                    file.write(i.replace("<private>",Private(entities,t,get_indentation(i))))
                 case i if "<settergetter>" in i:
-                    x = i.replace("<settergetter>",GetSet(entities,t,get_indentation(i)))
-                    file.write(x)
+                    file.write(i.replace("<settergetter>",GetSet(entities,t,get_indentation(i))))
                 case i if "<constructor>" in i:
-                    x = i.replace("<constructor>",Constructor(entities,t,get_indentation(i)))
-                    file.write(x)
+                    file.write(i.replace("<constructor>",Constructor(entities,t,get_indentation(i))))
                 case i if "<properties>" in i:
-                    x = i.replace("<properties>",properties(entities,t,get_indentation(i)))
-                    file.write(x)
+                    file.write(i.replace("<properties>",properties(entities,t,get_indentation(i))))
                 case i if "<constructorwithoutid>" in i:
-                    x = i.replace("<constructorwithoutid>",ConstructorWithoutId(entities,t,get_indentation(i)))
-                    file.write(x)
+                    file.write(i.replace("<constructorwithoutid>",ConstructorWithoutId(entities,t,get_indentation(i))))
                 case i if "<propertiesWithoutId>" in i:
-                    x = i.replace("<propertiesWithoutId>",propertiesWithoutId(entities,t,get_indentation(i)))
-                    file.write(x)
+                    file.write(i.replace("<propertiesWithoutId>",propertiesWithoutId(entities,t,get_indentation(i))))
                 case i if "<tostring>" in i:
-                    x = i.replace("<tostring>",ToString(entities,t,get_indentation(i)))
-                    file.write(x)
+                    file.write(i.replace("<tostring>",ToString(entities,t,get_indentation(i))))
                 case i:
                     file.write(i)
         file.close()
