@@ -7,19 +7,21 @@
         <GetAll>
         {
             SqlConnection conn = DatabaseSingleton.GetInstance();
+            <WinList>
 
             <select>
             {
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    <NewInstance>
+                    <NewInstance>(
                         <Reader>
                     );
                     <yield>
                 }
                 reader.Close();
             }
+            <WinListReturn>
         }
 
         <Save>
@@ -30,7 +32,7 @@
 
             <InseretSQL>
             {
-                <Params>
+                <ParamsWithoutid>
                 
                 command.ExecuteNonQuery();
             }
@@ -56,9 +58,10 @@
 
             <UpdateSQL>
             {
-                <idParam>
                 <Params>
 
                 command.ExecuteNonQuery();
             }
         }
+    }
+}

@@ -17,16 +17,22 @@ def ClassName(t):
     temp = f"public class {t}"
     return temp
 
-def GetAll(t):
-    temp = f"public IEnumerable<{t.capitalize()}> GetAll()"
+def GetAll(t,json):
+    if json["Windowed"]:
+        temp = f"public List<{t.capitalize()}> GetAll()"
+    else:
+        temp = f"public IEnumerable<{t.capitalize()}> GetAll()"
     return temp
+
+def WinList(t):
+    return f"List<{t}> {t.lower()}List = new List<{t}>();"
 
 def Select(t):
     temp = f'using (SqlCommand command = new SqlCommand("SELECT * FROM {t}", conn))'
     return temp
 
 def NewInstance(current):
-    temp = (f"{current.capitalize()} {current.lower()} = new {current.capitalize()}(")
+    temp = (f"{current.capitalize()} {current.lower()} = new {current.capitalize()}")
     return temp
 
 def Reader(entities,t,indentation):
@@ -54,8 +60,14 @@ def Reader(entities,t,indentation):
                         used -=1
             return (temp[0:len(temp)-1])
         
-def yiel(t):
-    return f"yield return {t.lower()};"
+def yiel(t,json):
+    if json["Windowed"]:
+        return f"{t.lower()}List.Add({t.lower()});"
+    else:
+        return f"yield return {t.lower()};"
+    
+def WinListReturn(t):
+    return f"return {t.lower()}List;"
 
 def Save(t):
     return f"public void Save({t} {t.lower()[0]})"
@@ -75,18 +87,20 @@ def InseretSQL(entities,t):
                     atributes += f"@{z}, "
             temp += atributes[0:len(atributes)-2]+')", conn))'
             return temp
-
-def Params(entities,t,indentation):
+        
+def ParamsWithoutid(entities,t,indentation):
     for x,i in entities.items():
         if(x.capitalize() == t):
             temp = ""
             First = True
             for z,y in i.items():
                 if First:
-                    temp += f'command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
-                    First = False
+                    if z != "id":
+                        temp += f'command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
+                        First = False
                 else:
-                    temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
+                    if z != "id":
+                        temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
             return temp
         
 def Delete(t):
@@ -101,15 +115,35 @@ def idParam(t):
 def Update(t):
     return f"public void Update({t} {t.lower()[0]})"
 
-def UpdateSQL(entities,t):
+def UpdateSQL(entities,t,json):
     temp = f'using (command = new SqlCommand("update {t} set '
     for x,i in entities.items():
         if(x.capitalize() == t):
-            atributes = ""
-            for z,y in i.items():
-                if z != "id":
-                    atributes += f"{z} = @{z}, "
-            temp += atributes[0:len(atributes)-2]+' " + "where id = @id", conn))'
+            if json["Windowed"]:
+                temp += f'{{collum}} = @value " + "where id = @id", conn))'
+            else:
+                atributes = ""
+                for z,y in i.items():
+                    if z != "id":
+                        atributes += f"{z} = @{z}, "
+                temp += atributes[0:len(atributes)-2]+' " + "where id = @id", conn))'
+            return temp
+        
+def Params(entities,t,indentation,json):
+    for x,i in entities.items():
+        if(x.capitalize() == t):
+            temp = ""
+            if json["Windowed"]:
+                temp += f'command.Parameters.Add(new SqlParameter("@id", id));'
+                temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@value", value));'
+            else:
+                First = True
+                for z,y in i.items():
+                    if First:
+                        temp += f'command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
+                        First = False
+                    else:
+                        temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
             return temp
 
 
@@ -162,8 +196,12 @@ def GenerateDAO(entities):
                     x = i.replace("<class>",ClassName(t))
                     file.write(x)
                 case i if "<GetAll>" in i:
-                    x = i.replace("<GetAll>",GetAll(t))
+                    x = i.replace("<GetAll>",GetAll(t,json))
                     file.write(x)
+                case i if "<WinList>" in i:
+                    if json["Windowed"]:
+                        x = i.replace("<WinList>",WinList(t))
+                        file.write(x)
                 case i if "<select>" in i:
                     x = i.replace("<select>",Select(t))
                     file.write(x)
@@ -174,16 +212,20 @@ def GenerateDAO(entities):
                     x = i.replace("<Reader>",Reader(entities,t,get_indentation(i)))
                     file.write(x)
                 case i if "<yield>" in i:
-                    x = i.replace("<yield>",yiel(t))
+                    x = i.replace("<yield>",yiel(t,json))
                     file.write(x)
+                case i if "<WinListReturn>" in i:
+                    if json["Windowed"]:
+                        x = i.replace("<WinListReturn>",WinListReturn(t))
+                        file.write(x)
                 case i if "<Save>" in i:
                     x = i.replace("<Save>",Save(t))
                     file.write(x)
                 case i if "<InseretSQL>" in i:
                     x = i.replace("<InseretSQL>",InseretSQL(entities,t))
                     file.write(x)
-                case i if "<Params>" in i:
-                    x = i.replace("<Params>",Params(entities,t,get_indentation(i)))
+                case i if "<ParamsWithoutid>" in i:
+                    x = i.replace("<ParamsWithoutid>",ParamsWithoutid(entities,t,get_indentation(i)))
                     file.write(x)
                 case i if "<Delete>" in i:
                     x = i.replace("<Delete>",Delete(t))
@@ -194,8 +236,14 @@ def GenerateDAO(entities):
                 case i if "<idParam>" in i:
                     x = i.replace("<idParam>",idParam(t))
                     file.write(x)
+                case i if "<Update>" in i:
+                    x = i.replace("<Update>",Update(t))
+                    file.write(x)
                 case i if "<UpdateSQL>" in i:
-                    x = i.replace("<UpdateSQL>",UpdateSQL(entities,t))
+                    x = i.replace("<UpdateSQL>",UpdateSQL(entities,t,json))
+                    file.write(x)
+                case i if "<Params>" in i:
+                    x = i.replace("<Params>",Params(entities,t,get_indentation(i),json))
                     file.write(x)
                 case i:
                     file.write(i)

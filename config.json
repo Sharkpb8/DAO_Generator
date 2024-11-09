@@ -1,5 +1,6 @@
 {
     "namespace": "Database_project",
+    "Windowed": true,
     "class":{
         "using":["Collections.Generic","Linq","Text","Threading.Tasks"]
     },
