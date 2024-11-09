@@ -60,7 +60,7 @@ def yiel(t):
 def Save(t):
     return f"public void Save({t} {t.lower()[0]})"
 
-def Inseret(entities,t):
+def InseretSQL(entities,t):
     temp = f'using (command = new SqlCommand("insert into {t} ('
     for x,i in entities.items():
         if(x.capitalize() == t):
@@ -88,6 +88,15 @@ def Params(entities,t,indentation):
                 else:
                     temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
             return temp
+        
+def Delete(t):
+    return f"public void Delete(int {t.lower()[0]})"
+
+def DeleteSQL(t):
+    return f'using (SqlCommand command = new SqlCommand("DELETE FROM {t} WHERE id = @id", conn))'
+
+def idParam(t):
+    return f'command.Parameters.Add(new SqlParameter("@id", {t.lower()[0]}));'
 
 
 
@@ -156,11 +165,20 @@ def GenerateDAO(entities):
                 case i if "<Save>" in i:
                     x = i.replace("<Save>",Save(t))
                     file.write(x)
-                case i if "<Inseret>" in i:
-                    x = i.replace("<Inseret>",Inseret(entities,t))
+                case i if "<InseretSQL>" in i:
+                    x = i.replace("<InseretSQL>",InseretSQL(entities,t))
                     file.write(x)
                 case i if "<Params>" in i:
                     x = i.replace("<Params>",Params(entities,t,get_indentation(i)))
+                    file.write(x)
+                case i if "<Delete>" in i:
+                    x = i.replace("<Delete>",Delete(t))
+                    file.write(x)
+                case i if "<DeleteSQL>" in i:
+                    x = i.replace("<DeleteSQL>",DeleteSQL(t))
+                    file.write(x)
+                case i if "<idParam>" in i:
+                    x = i.replace("<idParam>",idParam(t))
                     file.write(x)
                 case i:
                     file.write(i)

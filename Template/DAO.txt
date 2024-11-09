@@ -28,10 +28,22 @@
 
             SqlCommand command = null;
 
-            <Inseret>
+            <InseretSQL>
             {
                 <Params>
                 
+                command.ExecuteNonQuery();
+            }
+        }
+
+        <Delete>
+        {
+            SqlConnection conn = DatabaseSingleton.GetInstance();
+
+            <DeleteSQL>
+            {
+                <idParam>
+
                 command.ExecuteNonQuery();
             }
         }
