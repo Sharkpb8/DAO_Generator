@@ -114,6 +114,7 @@ def GetTables(entities):
     return tables
 
 def OpenFile(table):
+    #add separate file for each DAO and class
     if(os.path.exists("./Output") == False):
         os.mkdir("./Output")
     if(os.path.isfile(f"./Output/{table}.cs")):

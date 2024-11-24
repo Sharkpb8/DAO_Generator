@@ -47,6 +47,9 @@ def Reader(entities,t,indentation):
                     if(y == "int"):
                         temp += f"Convert.ToInt32(reader[{lenght-used}].ToString()),"
                         used -=1
+                    elif(y == "DateTime"):
+                        temp += f"Convert.ToDateTime(reader[{lenght-used}].ToString()),"
+                        used -=1
                     else:
                         temp += f"reader[{lenght-used}].ToString(),"
                         used -=1
@@ -54,6 +57,9 @@ def Reader(entities,t,indentation):
                 else:
                     if(y == "int"):
                         temp += f"\n{indentation}Convert.ToInt32(reader[{lenght-used}].ToString()),"
+                        used -=1
+                    elif(y == "DateTime"):
+                        temp += f"\n{indentation}Convert.ToDateTime(reader[{lenght-used}].ToString()),"
                         used -=1
                     else:
                         temp += f"\n{indentation}reader[{lenght-used}].ToString(),"
@@ -155,6 +161,7 @@ def GetTables(entities):
     return tables
 
 def OpenFile(table):
+    #add separate file for each DAO and class
     if(os.path.exists("./Output") == False):
         os.mkdir("./Output")
     if(os.path.isfile(f"./Output/{table}DAO.cs")):
