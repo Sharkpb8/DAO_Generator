@@ -164,9 +164,6 @@ def GetTables(entities):
 def CreateOutput():
     if(os.path.exists("./Output") == False):
         os.mkdir("./Output")
-    if(not os.listdir("./Output")):
-        shutil.rmtree("./Output")
-        os.mkdir("./Output")
 
 def OpenFile(table,json):
     if(json["Folders"] == "Separate"):
