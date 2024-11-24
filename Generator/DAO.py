@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import shutil
 
 def Using(json):
     temp = "using System;"
@@ -160,16 +161,32 @@ def GetTables(entities):
         tables.append(i.capitalize())
     return tables
 
-def OpenFile(table):
-    #add separate file for each DAO and class
+def CreateOutput():
     if(os.path.exists("./Output") == False):
         os.mkdir("./Output")
-    if(os.path.isfile(f"./Output/{table}DAO.cs")):
-        f = open(f"./Output/{table}DAO.cs","w")
-        return f
-    else:
-        f = open(f"./Output/{table}DAO.cs","x")
-        return f
+    if(not os.listdir("./Output")):
+        shutil.rmtree("./Output")
+        os.mkdir("./Output")
+
+def OpenFile(table,json):
+    if(json["Folders"] == "Separate"):
+        if(os.path.exists(f"./Output/{table}") == False):
+            os.mkdir(f"./Output/{table}")
+        if(os.path.isfile(f"./Output/{table}/{table}DAO.cs")):
+            f = open(f"./Output/{table}/{table}DAO.cs","w")
+            return f
+        else:
+            f = open(f"./Output/{table}/{table}DAO.cs","x")
+            return f
+    elif(json["Folders"] == "Combined"):
+        if(os.path.exists(f"./Output/DAO") == False):
+            os.mkdir(f"./Output/DAO")
+        if(os.path.isfile(f"./Output/DAO/{table}DAO.cs")):
+            f = open(f"./Output/DAO/{table}DAO.cs","w")
+            return f
+        else:
+            f = open(f"./Output/DAO/{table}DAO.cs","x")
+            return f
 
 def OpenJson():
     j = open('./config.json', 'r')
@@ -187,10 +204,11 @@ def get_indentation(line):
 
 def GenerateDAO(entities):
     tables = GetTables(entities)
+    CreateOutput()
     for t in tables:
         read = ReadTemplate()
         json = OpenJson()
-        file = OpenFile(t)
+        file = OpenFile(t,json)
         for i in read:
             match i:
                 case i if "<using>" in i:

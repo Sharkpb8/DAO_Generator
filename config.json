@@ -1,7 +1,7 @@
 {
     "namespace": "Database_project",
     "Windowed": false,
-    "Folders": "Separate",
+    "Folders": "Combined",
     "class":{
         "using":["Collections.Generic","Linq","Text","Threading.Tasks"]
     },
