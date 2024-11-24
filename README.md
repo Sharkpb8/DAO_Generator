@@ -26,12 +26,14 @@ There are 2 ways you can configure this code
 - open `configuration.json`
     -  namespace - set this to the name of your c# project name
     -  Windowed - set this to `true` if you created your application as Windows Forms App otherwise set it to `false`
-    -  class and DAO using - in this list add everything that you want to use for example: SqlClient,Xml etc.
-example of configurated json:
+    -  Folders - set this to `Combined` if you want output to be seperated by Class and DAO, set it to `Separate` if you want separate folder for Each table
+    -  Class and DAO using - in this list add everything that you want to use for example: SqlClient,Xml etc.
+- example of configurated json:
 ```
 {
     "namespace": "Database_project",
     "Windowed": true,
+    "Folders": "Combined",
     "class":{
         "using":["Collections.Generic","Linq","Text","Threading.Tasks"]
     },
