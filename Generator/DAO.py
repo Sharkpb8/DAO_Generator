@@ -103,11 +103,11 @@ def ParamsWithoutid(entities,t,indentation):
             for z,y in i.items():
                 if First:
                     if z != "id":
-                        temp += f'command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
+                        temp += f'command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z.capitalize()}));'
                         First = False
                 else:
                     if z != "id":
-                        temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
+                        temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z.capitalize()}));'
             return temp
         
 def Delete(t):
@@ -147,10 +147,10 @@ def Params(entities,t,indentation,json):
                 First = True
                 for z,y in i.items():
                     if First:
-                        temp += f'command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
+                        temp += f'command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z.capitalize()}));'
                         First = False
                     else:
-                        temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z}));'
+                        temp += f'\n{indentation}command.Parameters.Add(new SqlParameter("@{z}", {x.lower()[0]}.{z.capitalize()}));'
             return temp
 
 
