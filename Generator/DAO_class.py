@@ -40,10 +40,10 @@ def GetSet(entities,t,indentation):
             First = True
             for z,y in i.items():
                 if First:
-                    temp += f"public {y} {z.capitalize()} {{ get => {z}; set => {z} = values; }}"
+                    temp += f"public {y} {z.capitalize()} {{ get => {z}; set => {z} = value; }}"
                     First = False
                 else:
-                    temp += f"\n{indentation}public {y} {z.capitalize()} {{ get => {z}; set => {z} = values; }}"
+                    temp += f"\n{indentation}public {y} {z.capitalize()} {{ get => {z}; set => {z} = value; }}"
             return temp
 
 def Constructor(entities,t,indentation):
