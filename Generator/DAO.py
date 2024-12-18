@@ -15,7 +15,7 @@ def Namespace(json):
     return temp
 
 def ClassName(t):
-    temp = f"public class {t}"
+    temp = f"public class {t}DAO"
     return temp
 
 def GetAll(t,json):
