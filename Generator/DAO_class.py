@@ -6,7 +6,7 @@ import shutil
 def Using(json):
     x = "using System;"
     for i in json["class"]["using"]:
-        x += f"\nusing System.{i}"
+        x += f"\nusing System.{i};"
     x += "\n"
     return x
 
