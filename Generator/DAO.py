@@ -6,7 +6,7 @@ import shutil
 def Using(json):
     temp = "using System;"
     for i in json["DAO"]["using"]:
-        temp += f"\nusing System.{i}"
+        temp += f"\nusing System.{i};"
     temp += "\n"
     return temp
 
